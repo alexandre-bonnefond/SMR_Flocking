@@ -594,14 +594,11 @@ void CalculatePreferredVelocity(double *OutputVelocity,
         /* Repulsion */
         RepulsionLin(PotentialVelocity, Phase, V_Rep,
                 Slope_Rep, R_0, WhichAgent, (int) Dim, false);
-        printf("%f\t", VectAbs(PotentialVelocity));
         /* Attraction */
         AttractionLin(AttractionVelocity, Phase, V_Rep,
                 Slope_Att, R_0 + 500, WhichAgent, (int) Dim, false);
-
         /* Press Rep */
         PressureRepulsion(PressureVelocity, Phase, K_Press, WhichAgent, (int) Dim, R_0);
-        printf("%f\t%d\n", VectAbs(PressureVelocity), WhichAgent);
 
         // GradientBased(GradientAcceleration, Phase, Epsilon, A_Action_Function, B_Action_Function, H_Bump,
         //     R_0, 3 * R_0, WhichAgent, (int) Dim);

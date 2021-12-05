@@ -1102,9 +1102,6 @@ void UpdatePositionsToDisplay() {
         NumberOfCluster = CountCluster(ActualPhase, Visited, &ActualUnitParams);
         ActualSitParams.NumberOfClusters = NumberOfCluster;
 
-        DistanceBetweenAgentsLive = StatOfDistanceBetweenNearestNeighbours(&ActualPhase)[0];
-        printf("%f\n", DistanceBetweenAgentsLive*0.01);
-
     }
 
     
