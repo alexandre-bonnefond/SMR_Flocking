@@ -7,6 +7,7 @@
 
 #include "dynspecviz.h"
 #include "algo_spp_evol.h"
+#include "algo_spring.h"
 #include "utilities/obstacles.h"
 #include <stdlib.h>
 
@@ -205,22 +206,22 @@ void DrawSensorRangeNetwork_2D(phase_t * PhaseData,
                                                         VizParams->MapSizeXY), angle, color);
                                 }
 
-                                else if (AbsDistance <= Unit_params->R_C.Value) {
+                                // else if (AbsDistance <= Unit_params->R_C.Value) {
 
-                                        CenterX1 = ActualAgentsCoordinates[0] - VizParams->CenterX;
-                                        CenterY1 = ActualAgentsCoordinates[1] - VizParams->CenterY;
+                                //         CenterX1 = ActualAgentsCoordinates[0] - VizParams->CenterX;
+                                //         CenterY1 = ActualAgentsCoordinates[1] - VizParams->CenterY;
 
-                                        CenterX2 = NeighboursCoordinates[0] - VizParams->CenterX;
-                                        CenterY2 = NeighboursCoordinates[1] - VizParams->CenterY;
+                                //         CenterX2 = NeighboursCoordinates[0] - VizParams->CenterX;
+                                //         CenterY2 = NeighboursCoordinates[1] - VizParams->CenterY;
 
-                                        DrawDashedLine(RealToGlCoord_2D(CenterX1,VizParams->MapSizeXY),
-                                                RealToGlCoord_2D(CenterY1, VizParams->MapSizeXY),
-                                                RealToGlCoord_2D(CenterX2,VizParams->MapSizeXY),
-                                                RealToGlCoord_2D(CenterY2, VizParams->MapSizeXY),
-                                                color);
+                                //         DrawDashedLine(RealToGlCoord_2D(CenterX1,VizParams->MapSizeXY),
+                                //                 RealToGlCoord_2D(CenterY1, VizParams->MapSizeXY),
+                                //                 RealToGlCoord_2D(CenterX2,VizParams->MapSizeXY),
+                                //                 RealToGlCoord_2D(CenterY2, VizParams->MapSizeXY),
+                                //                 color);
 
 
-                                }
+                                // }
                         }
 
                         else if ((int)(Unit_params->communication_type.Value) == 1) {
@@ -244,21 +245,21 @@ void DrawSensorRangeNetwork_2D(phase_t * PhaseData,
                                                         VizParams->MapSizeXY), angle, color);
                                 }
 
-                                else if (PhaseData[Now].Laplacian[WhichAgent][i] > Unit_params->sensitivity_thresh.Value) {
+                                // else if (PhaseData[Now].Laplacian[WhichAgent][i] > Unit_params->sensitivity_thresh.Value) {
 
-                                        CenterX1 = ActualAgentsCoordinates[0] - VizParams->CenterX;
-                                        CenterY1 = ActualAgentsCoordinates[1] - VizParams->CenterY;
+                                //         CenterX1 = ActualAgentsCoordinates[0] - VizParams->CenterX;
+                                //         CenterY1 = ActualAgentsCoordinates[1] - VizParams->CenterY;
 
-                                        CenterX2 = NeighboursCoordinates[0] - VizParams->CenterX;
-                                        CenterY2 = NeighboursCoordinates[1] - VizParams->CenterY;
+                                //         CenterX2 = NeighboursCoordinates[0] - VizParams->CenterX;
+                                //         CenterY2 = NeighboursCoordinates[1] - VizParams->CenterY;
 
-                                        DrawDashedLine(RealToGlCoord_2D(CenterX1,VizParams->MapSizeXY),
-                                                RealToGlCoord_2D(CenterY1, VizParams->MapSizeXY),
-                                                RealToGlCoord_2D(CenterX2,VizParams->MapSizeXY),
-                                                RealToGlCoord_2D(CenterY2, VizParams->MapSizeXY),
-                                                color);
+                                //         DrawDashedLine(RealToGlCoord_2D(CenterX1,VizParams->MapSizeXY),
+                                //                 RealToGlCoord_2D(CenterY1, VizParams->MapSizeXY),
+                                //                 RealToGlCoord_2D(CenterX2,VizParams->MapSizeXY),
+                                //                 RealToGlCoord_2D(CenterY2, VizParams->MapSizeXY),
+                                //                 color);
 
-                                }
+                                // }
                         }
 
                         else if ((int)(Unit_params->communication_type.Value) == 2) {

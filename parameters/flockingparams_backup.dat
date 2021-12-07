@@ -7,7 +7,7 @@ V_Frict=63.000000
 # Maximum velocity (Multiply it with 0.010000 to get its Value in m/s)
 V_Max=700.000000
 # Equilibrium distance (Multiply it with 0.010000 to get its Value in m)
-R_0=2000.000000
+R_0=4000.000000
 # Slope of pressure repulsion (-)
 K_Press=0
 # Friction range (Multiply it with 0.010000 to get its Value in m)
@@ -15,13 +15,9 @@ R_0_Offset_Frict=8530.000000
 # Shill dist offset (Multiply it with 0.010000 to get its Value in m)
 R_0_Shill=30.000000
 # Slope of repulsion (1/s)
-Slope_Rep=0.001
+Slope_Rep=0.130000
 # Slope of attraction (1/s)
-Slope_Att=0.0001
-# Slope of alignment (-)
-Slope_Align=0.001
-# Order of alignment error (-)
-Alpha=1.00;
+Slope_Att=0.006000
 # Slope of friction (1/s)
 Slope_Frict=3.200000
 # Acc limit of Friction (Multiply it with 0.010000 to get its Value in m/s^2)
@@ -41,7 +37,7 @@ A_Action_Function=10.000000
 # B Action Function (m)
 B_Action_Function=37.000000
 # Size of neighbourhood (-)
-Size_Neighbourhood=5.000000
+Size_Neighbourhood=10.000000
 # Arena Radius (Multiply it with 0.010000 to get its Value in m)
 ArenaRadius=25000.000000
 # Friction coefficient (-)

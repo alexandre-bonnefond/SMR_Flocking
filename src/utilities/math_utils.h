@@ -74,6 +74,9 @@ char * fromDeci(char res[], int base, int inputNum);
 void FillVect(double *VectToFill, const double x, const double y,
         const double z);
 
+/* Power each component of the input vector */
+void VectPow(double *VectToFill, double *VectInput, const int Order, const int Dim);
+
 /* Return a vector with the indexes corresponding to a sorted vector */
 void ArgMaxSort(double *InputVect, int Length, int * IndexVect);
 

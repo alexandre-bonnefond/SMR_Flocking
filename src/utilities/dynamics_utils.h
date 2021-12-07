@@ -46,15 +46,14 @@ typedef struct {
     int *RealIDs;
     int NumberOfInnerStates;
     int NumberOfAgents;
-    measurement_bundle ***CBP; 
 } phase_t;
 
 /* Simple tools for allocating phase space and cleaning memory
  */
 void AllocatePhase(phase_t * Phase, const int NumberOfAgents,
-        const int NumberOfInnerStates, const int Resolution);
+        const int NumberOfInnerStates);
         
-void freePhase(phase_t * Phase, const int Resolution);
+void freePhase(phase_t * Phase);
 
 /* Insert specific agent's coordinates and velocity (denoted by "Agent") into
  * an existing phase space denoted by "Phase".
@@ -222,7 +221,7 @@ void GetAgentsVelocityFromTimeLine(double *Velocity, phase_t * PhaseData,
 /* Inserting positions and velocities into timeline
  */
 void InsertPhaseToDataLine(phase_t * PhaseData, phase_t * Phase,
-        const int WhichStep, int Resolution);
+        const int WhichStep);
 
 /* Inserting inner states into inner state timeline
  */
@@ -248,13 +247,6 @@ void InitCond(phase_t ** PhaseData,
 
 /* Waiting - filling up timelines with initial conditions */
 void Wait(phase_t * PhaseData, const double TimeToWait, const double h);
-
-/* Figure out where we are in the grid for the CBP */
-void WhereInGrid(phase_t * Phase, const int Resolution, 
-        const int WhichAgent,
-        const double ArenaCenterX, 
-        const double ArenaCenterY, 
-        const double ArenaSize);
 
 /* Setting up random conditions (with zero velocities)
  */
@@ -356,10 +348,6 @@ int SelectNearbyVisibleAgents(phase_t * Phase, double *ReferencePosition,
 /* Calculate the received power of an agent depending on which method is used */
 /* The log-distance with varying alpha is chosen here and we have a reference distance */
 double DegradedPower(double Dist, double DistObst, double Loss, unit_model_params_t * UnitParams);
-
-/* Voxel Traversal method for obstacle detection */
-void FastVoxelTraversal(phase_t *Phase, double *CoordsA, double *CoordsB, int WhichAgent,
-                        double ArenaCenterX, double ArenaCenterY, double ArenaSize, int Resolution);
 
 /* Measurement of the pressure */
 double PressureMeasure(phase_t * Phase, int WhichAgent, int Alpha, const int Dim, double distEq);

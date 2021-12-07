@@ -1,5 +1,5 @@
 # Number of agents
-NumberOfAgents=40
+NumberOfAgents=20
 # Length of the simulated experiment (s)
 # 
 Length=600.0
@@ -23,6 +23,4 @@ LengthToStore=15.0
 # Default speed of visualization
 VizSpeedUp=40
 StartOfSteadyState=10
-#CBP
-Resolution=2
 

@@ -6,6 +6,7 @@ PNG_OUT := $(strip $(pngout))
 DEBUG_MODE := $(strip $(debug))
 SERVER_MODE := $(strip $(server))
 
+
 DEFAULT_FLAGS := -lm
 VIZUALIZER_FLAGS := -lGL -lGLU -lglut
 PNGOUTPUT_FLAGS := -lIL -lILU -lILUT
@@ -44,9 +45,6 @@ endif
 # SPP model for testing evolution algorithms
 spp_evol:
 	$(GCC) src/algo_spp_evol.c src/algo_spp_evol_gui.c src/algo_spp_evol_stat.c src/utilities/interactions.c src/utilities/obstacles.c
+project:
+	$(GCC) src/algo_spring.c src/algo_spp_evol_gui.c src/algo_spp_evol_stat.c src/utilities/interactions_project.c src/utilities/obstacles.c
 
-debug:
-	$(GCC) src/algo_spp_evol.c src/algo_spp_evol_gui.c src/algo_spp_evol_stat.c src/utilities/interactions.c src/utilities/obstacles.c 
-
-optim:
-	$(GCC) src/algo_spp_evol.c src/algo_spp_evol_stat.c src/utilities/interactions.c src/utilities/obstacles.c 

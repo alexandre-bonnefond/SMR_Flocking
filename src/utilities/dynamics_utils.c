@@ -13,7 +13,7 @@
 */
 
 void AllocatePhase(phase_t * Phase, const int NumberOfAgents,
-        const int NumberOfInnerStates, const int Resolution) {
+        const int NumberOfInnerStates) {
     int i;
 
     Phase->NumberOfAgents = NumberOfAgents;
@@ -25,7 +25,6 @@ void AllocatePhase(phase_t * Phase, const int NumberOfAgents,
     Phase->InnerStates = doubleMatrix(NumberOfAgents, NumberOfInnerStates);
     Phase->RealIDs = intData(NumberOfAgents);
     Phase->NumberOfInnerStates = NumberOfInnerStates;
-    Phase->CBP = allocMeasurementMatrix(NumberOfAgents, Resolution, Resolution, 0);
 
     /* Initialize RealIDs and ReceivedPower and Laplacian*/
     for (i = 0; i < NumberOfAgents; i++) {
@@ -33,7 +32,7 @@ void AllocatePhase(phase_t * Phase, const int NumberOfAgents,
     }
 }
 
-void freePhase(phase_t * Phase, const int Resolution) {
+void freePhase(phase_t * Phase) {
 
     freeMatrix(Phase->Coordinates, Phase->NumberOfAgents, 3);
     freeMatrix(Phase->Velocities, Phase->NumberOfAgents, 3);
@@ -43,7 +42,6 @@ void freePhase(phase_t * Phase, const int Resolution) {
             Phase->NumberOfInnerStates);
     free(Phase->RealIDs);
     free(Phase->ReceivedPower);
-    freeMeasurementMatrix(Phase->CBP, Phase->NumberOfAgents, Resolution, Resolution);
 }
 
 /* Inserts the "WhichAgent"th agent's position and velocity into "Phase" */
@@ -715,7 +713,7 @@ void GetAgentsVelocityFromTimeLine(double *Velocity, phase_t * PhaseData,
 
 /* Inserts the actual position, velocity and Laplacian of the agents into "PhaseData" */
 void InsertPhaseToDataLine(phase_t * PhaseData, phase_t * Phase,
-        const int WhichStep, int Resolution) {
+        const int WhichStep) {
 
     int i, j;
     for (j = 0; j < Phase->NumberOfAgents; j++) {
@@ -727,13 +725,6 @@ void InsertPhaseToDataLine(phase_t * PhaseData, phase_t * Phase,
             PhaseData[WhichStep].Laplacian[j][i] = Phase->Laplacian[j][i];
         }
         PhaseData[WhichStep].Pressure[j] = Phase->Pressure[j];
-    }
-    for (i = 0; i < Phase->NumberOfAgents; i++) {
-        for (j = 0; j < Resolution; j++) {
-            for (int k = 0; k < Resolution; k++) {
-                PhaseData[WhichStep].CBP[i][j][k] = Phase->CBP[i][j][k];
-            }
-        }
     }
 }
 
@@ -818,53 +809,6 @@ void Wait(phase_t * PhaseData, const double TimeToWait, const double h) {
         }
     }
 
-}
-
-void WhereInGrid(phase_t * Phase, const int Resolution, 
-        const int WhichAgent,
-        const double ArenaCenterX, 
-        const double ArenaCenterY, 
-        const double ArenaSize) {
-
-        // Get agent's coordinates
-        static double AgentsCoords[3];
-        for (int k = 0; k < 3; k++) {
-            AgentsCoords[k] = Phase->Coordinates[WhichAgent][k];
-        }
-
-        double SquareSize = 2 * ArenaSize / Resolution;
-        
-        // Compute agent's coordinates in CBP space
-        double x_0 = (AgentsCoords[0] - (ArenaCenterX - ArenaSize));
-        double y_0 = - (AgentsCoords[1] - (ArenaCenterY + ArenaSize)); // TODO check why a minus sign is needed
-        int i_x_0 = (int) (x_0 / SquareSize);
-        int i_y_0 = (int) (y_0 / SquareSize);
-
-        // TODO get GPS's position stdev or compute SNR
-        double SNR = 60;
-        double sigma = 100 * sqrt(10 + 150*150 * pow(10, -SNR/10));
-        
-        if (i_x_0 >= 0 && i_x_0 < Resolution && i_y_0 >= 0 && i_y_0 < Resolution)
-            insertMeasurementIntoBundle(Phase->CBP[WhichAgent], i_x_0, i_y_0, 1, MTYPE_TRAIL);
-
-        float numberOfSigma = 1.5;
-        for(int xOffset = - numberOfSigma * sigma; xOffset < numberOfSigma * sigma; xOffset += SquareSize) {
-            for(int yOffset = - numberOfSigma * sigma; yOffset < numberOfSigma * sigma; yOffset += SquareSize) {
-
-                if (xOffset*xOffset + yOffset*yOffset > numberOfSigma*numberOfSigma*sigma*sigma) continue;
-
-                int i_x = (int) ( (x_0 + xOffset) / SquareSize );
-                int i_y = (int) ( (y_0 + yOffset) / SquareSize );
-                // Avoid out of bounds access when agents are out of the arena
-                if (i_x >= 0 && i_x < Resolution && i_y >= 0 && i_y < Resolution && !(i_x == i_x_0 && i_y == i_y_0)) {
-                    // Notify presence of the agent in the cell
-                    
-                    // double measurement = gaussianPdf(0, sigma, sqrt(xOffset*xOffset + yOffset*yOffset), 1);
-                    double measurement = 1;
-                    insertMeasurementIntoBundle(Phase->CBP[WhichAgent], i_x, i_y, measurement, MTYPE_TRAIL);
-                }
-            }
-        }
 }
 
 /* Randomizing phase of agents (with zero velocities) */
@@ -1865,100 +1809,6 @@ double DegradedPower(double Dist, double DistObst, double Loss, unit_model_param
             }
     }
         return Power;
-}
-
-/* Voxel Traversal method for obstacle detection */
-void FastVoxelTraversal(phase_t *Phase, double *CoordsA, double *CoordsB, int WhichAgent,
-                        double ArenaCenterX, double ArenaCenterY, double ArenaSize, int Resolution) {
-
-    int gridN = Resolution;
-
-    double gridMinBoundaries[2] = {ArenaCenterX - ArenaSize, ArenaCenterY - ArenaSize};
-    double gridMaxBoundaries[2] = {ArenaCenterX + ArenaSize, ArenaCenterY + ArenaSize};
-
-    double boxSize[2];
-    VectDifference2D(boxSize, gridMaxBoundaries, gridMinBoundaries);
-
-    double x = floor( ((CoordsA[0] - gridMinBoundaries[0]) / boxSize[0]) * gridN);
-    double y = floor( ((CoordsA[1] - gridMinBoundaries[1]) / boxSize[1]) * gridN);
-
-    double TargetX = floor( ((CoordsB[0] - gridMinBoundaries[0]) / boxSize[0]) * gridN);
-    double TargetY = floor( ((CoordsB[1] - gridMinBoundaries[1]) / boxSize[1]) * gridN);
-
-    double AB[2];
-    VectDifference2D(AB, CoordsB, CoordsA);
-    double dirX = AB[0];
-    double dirY = AB[1];
-
-    int StepX, StepY;
-    double tVoxelX, tVoxelY;
-
-    if (dirX > 0) {
-        tVoxelX = (x + 1) / gridN;
-        StepX = 1;
-    }
-    else if (dirX < 0) {
-        tVoxelX = x / gridN;
-        StepX = -1;
-    }
-    else {
-        tVoxelX = 0;
-        StepX = 0;
-    }
-    if (dirY > 0) {
-        tVoxelY = (y + 1) / gridN;
-        StepY = 1;
-    }
-    else if (dirY < 0) {
-        tVoxelY = y / gridN;
-        StepY = -1;
-    }
-    else {
-        tVoxelY = 0;
-        StepY = 0;
-    }
-
-    double VoxelMaxX, VoxelMaxY;
-    VoxelMaxX = gridMinBoundaries[0] + tVoxelX * boxSize[0];
-    VoxelMaxY = gridMinBoundaries[1] + tVoxelY * boxSize[1];
-
-    double tMaxX, tMaxY;
-    tMaxX = (VoxelMaxX - CoordsA[0]) / dirX;
-    tMaxY = (VoxelMaxY - CoordsA[1]) / dirY;
-
-    double VoxelSizeX, VoxelSizeY;
-    VoxelSizeX = boxSize[0] / gridN;
-    VoxelSizeY = boxSize[1] / gridN;
-
-    double tDeltaX, tDeltaY;
-    tDeltaX = VoxelSizeX / fabs(dirX);
-    tDeltaY = VoxelSizeY / fabs(dirY);
-
-    int cnt = 0;
-    // printf("\t\t%f\t%f\n", TargetX, TargetY);
-
-    while ( (x < gridN) && (x >= 0) && (y < gridN) && (y >= 0) ) {
-
-        if (x == TargetX && y == TargetY) { /* printf("break condition\n"); */ break; }
-        
-        int i_y = Resolution - ((int) y + 1);
-        int i_x = (int) x;
-        if (Phase->CBP[WhichAgent][i_y][i_x].currentAvg > -1) {
-            insertMeasurementIntoBundle(Phase->CBP[WhichAgent], i_x, i_y, 0, MTYPE_OBST);
-        }
-        // printf("%f\t%f\n", x, y);
-
-
-        if (tMaxX < tMaxY) {
-            x = x + StepX;
-            tMaxX = tMaxX + tDeltaX;
-        }
-        else {
-            y = y + StepY;
-            tMaxY = tMaxY + tDeltaY;
-        }
-        cnt += 2;
-    }
 }
 
 /* Measurement of the pressure */

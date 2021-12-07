@@ -86,9 +86,6 @@ double **Polygons;
 /* Convex hull */
 node *Hull;
 
-/* CBP */
-static int ***CBPObst;
- 
 // Temporary...
 static bool HighRes = true;
 
@@ -162,8 +159,6 @@ void Initialize() {
             ActualPhase.Coordinates[i][j] = PhaseData[0].Coordinates[i][j];
         }
     }
-
-    CBPObst = tripleIntMatrix(ActualSitParams.NumberOfAgents, ActualSitParams.NumberOfAgents, 2 * sqrt(2) * ActualSitParams.Resolution);
 
     InitializePhase(&ActualPhase, &ActualFlockingParams, &ActualSitParams, Verbose);
 
@@ -273,7 +268,6 @@ void DisplayMenu() {
 
 /* Display some stats on a chart */
 void DisplayChart() {
-    int Resolution = ActualSitParams.Resolution;
 
     float occupiedColor[3] = {0, 0, 0};
     float freeColor[3] = {1, 1, 1};
@@ -281,84 +275,11 @@ void DisplayChart() {
     // float green[3] = {0, 1, 0};
     // float yellow[3] = {1, 1, 0};
 
-    double step = 2.0 / Resolution;
     glClearColor(ActualColorConfig.EraseColor[0],
             ActualColorConfig.EraseColor[1], ActualColorConfig.EraseColor[2], 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    int i,j,k;
-    double xsize = 0, ysize = 0;
-    // for (int ag = 0; ag < 1; ag++) {
-    //     for (row = 0; row < ActualSitParams.NumberOfAgents; row++) {
-    //         for (k = 0; k <100; k++) {
-    //             if (CBPObst[ag][row][k] != 0 && CBPObst[ag][row][k + 1] != 0) {
-    //                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    //                 // printf("%d\n", col);
-    //                 DrawShape(-1.0 + step/2 + step * CBPObst[ag][row][k], 1.0 - step/2 - CBPObst[ag][row][k + 1] * step, step, step, 0, red);
-    //             }
-    //         }
-    //     }
-    // }
-    for (i = 0; i < Resolution; i++) {
-        xsize = 0;
-        for (j = 0; j < Resolution; j++) {
-            // TODO merge maps for display
-            double mean = 0;
-            long sampleCount = 0; 
-            if (ActualVizParams.WhichAgentIsSelected == ActualPhase.NumberOfAgents) {    
-                for (k = 0; k < ActualSitParams.NumberOfAgents; k++) {
-                    
-                    // keep this condition and u can differenciate explored zones from inexplored zones
-                    if (ActualPhase.CBP[k][i][j].count > 0) {
-                        mean += ActualPhase.CBP[k][i][j].count;
-                        sampleCount += ActualPhase.CBP[k][i][j].count;
-                    }
-                    
-                    if (ActualPhase.CBP[k][i][j].countObst > 0) {
-                        mean += ActualPhase.CBP[k][i][j].countObst * 0;
-                        sampleCount += ActualPhase.CBP[k][i][j].countObst;
-                    }
-                }
-            } else {
-                int agentId = ActualVizParams.WhichAgentIsSelected;
-                
-                // keep this condition and u can differenciate explored zones from inexplored zones
-                if (ActualPhase.CBP[agentId][i][j].count > 0) {
-                    mean += ActualPhase.CBP[agentId][i][j].currentAvg;
-                    sampleCount++;
-                }
-                if (ActualPhase.CBP[agentId][i][j].currentObstAvg > 0) {
-                    mean += ActualPhase.CBP[agentId][i][j].currentObstAvg;
-                    sampleCount++;
-                }
-            }
-            
-            mean /= sampleCount;
-
-            if (mean >= 0) {
-                // DrawGradientColoredCircle(-1.0 + step/2 + xsize, 1.0 - ysize - step/2, step/4, step/6, green, yellow, 25);
-                mean = MIN(1, mean);
-                float col[3] = {0};
-                LerpColor(occupiedColor, freeColor, col, mean);
-
-                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                DrawShape(-1.0 + step/2 + xsize, 1.0 - ysize - step/2, step, step, 0, col);
-            }
-
-            float black[3] = {0,0,0};
-
-            char str[10];
-            sprintf(str, "%.2lf", mean);
-            DrawString(-1.025 + step/2 + xsize, 0.985 - ysize - step/2, GLUT_BITMAP_TIMES_ROMAN_10,
-                str, black);
-
-            xsize += step;
-        }
-        ysize += step;
-    }
-
-    DrawSquare(Resolution);
-
+    int i;
 
     for (int i = 0; i < ActualSitParams.NumberOfAgents; i++) {
         double* coord = ActualPhase.Coordinates[i];
@@ -1022,39 +943,9 @@ void UpdatePositionsToDisplay() {
                 /* Inserting output phase of the "step" function into the
                  * globally-allocated PhaseData and InnerStatesTimeLine
                  */
-                InsertPhaseToDataLine(PhaseData, &ActualPhase, Now + 1, ActualSitParams.Resolution);
+                InsertPhaseToDataLine(PhaseData, &ActualPhase, Now + 1);
                 InsertInnerStatesToDataLine(PhaseData, &ActualPhase, Now + 1);
                 
-                if (TimeStep * ActualSitParams.DeltaT > 20.0 && Now % ((int) (ActualUnitParams.t_GPS.Value / ActualSitParams.DeltaT)) == 0) {
-
-                    for (j = 0; j < ActualSitParams.NumberOfAgents; j++){
-                        static double CoordA[3];
-                        GetAgentsCoordinatesFromTimeLine(CoordA, PhaseData, j, Now + 1);
-                        for (k = 0; k < ActualSitParams.NumberOfAgents; k++){
-                            if (j != k) {
-                                
-                                static double CoordB[3];
-                                GetAgentsCoordinatesFromTimeLine(CoordB, PhaseData, k, Now + 1);
-                                int previousTick = Now - (int) (ActualUnitParams.t_GPS.Value / ActualSitParams.DeltaT) + 1;
-                                // double agentDistance = DistanceOfTwoPoints2D(CoordA, CoordB);
-                                double receivedPower = PhaseData[Now + 1].Laplacian[j][k];
-                                // double powerDifference = fabs(receivedPower - DegradedPower(agentDistance, 0, 0, &ActualUnitParams));
-                                double relPowerVariation = receivedPower - PhaseData[previousTick].Laplacian[j][k];
-
-                                if (PhaseData[previousTick].Laplacian[j][k] < -70) {
-                                    continue; // skip non-neighbours
-                                }
-
-                                if (relPowerVariation < -10) {
-                                    // printf("%lf %lf\n", receivedPower, powerDifference);
-                                    // printf("%lf\n", TimeStep * ActualSitParams.DeltaT);
-                                    FastVoxelTraversal(&ActualPhase, CoordA, CoordB, j, ArenaCenterX, ArenaCenterY, ArenaRadius, ActualSitParams.Resolution);
-                                }
-                            }
-                        }
-                    }
-                }
-
             } else {
                 /* Shifting Data line, if PhaseData is overloaded */
                 ShiftDataLine(PhaseData,
@@ -1079,7 +970,7 @@ void UpdatePositionsToDisplay() {
                  */
                 Now = (int) ((20.0 / ActualSitParams.DeltaT) - 1.0);
 
-                InsertPhaseToDataLine(PhaseData, &ActualPhase, Now + 1, ActualSitParams.Resolution);
+                InsertPhaseToDataLine(PhaseData, &ActualPhase, Now + 1);
                 InsertInnerStatesToDataLine(PhaseData, &ActualPhase, Now + 1);
 
             }
@@ -1929,11 +1820,11 @@ int main(int argc, char *argv[]) {
     /* Allocating phasespace for actual and delayed timestep */
     /* Creating inner states */
     AllocatePhase(&ActualPhase, ActualSitParams.NumberOfAgents,
-            ActualFlockingParams.NumberOfInnerStates, ActualSitParams.Resolution);
+            ActualFlockingParams.NumberOfInnerStates);
 
     /* Allocating phasespace for GPS signals */
-    AllocatePhase(&GPSPhase, ActualSitParams.NumberOfAgents, 0, ActualSitParams.Resolution);
-    AllocatePhase(&GPSDelayedPhase, ActualSitParams.NumberOfAgents, 0, ActualSitParams.Resolution);
+    AllocatePhase(&GPSPhase, ActualSitParams.NumberOfAgents, 0);
+    AllocatePhase(&GPSDelayedPhase, ActualSitParams.NumberOfAgents, 0);
 
     /* Allocating a matrix containing all necessary phase data (real) */
     int TimeStepsToStore =
@@ -1941,7 +1832,7 @@ int main(int argc, char *argv[]) {
     PhaseData = (phase_t *) calloc(1 + TimeStepsToStore, sizeof(phase_t));
     for (i = 0; i < 1 + TimeStepsToStore; i++) {
         AllocatePhase(&(PhaseData[i]), ActualSitParams.NumberOfAgents,
-                ActualPhase.NumberOfInnerStates, ActualSitParams.Resolution);
+                ActualPhase.NumberOfInnerStates);
     }
     AgentsInDanger = BooleanData(ActualSitParams.NumberOfAgents);
     InitializePreferredVelocities(&ActualPhase, &ActualFlockingParams,
@@ -2312,7 +2203,7 @@ int main(int argc, char *argv[]) {
                         &ActualSitParams, &ActualUnitParams,
                         ActualStatUtils.ElapsedTime,
                         ActualStatUtils.OutputDirectory);
-                InsertPhaseToDataLine(PhaseData, &ActualPhase, Now + 1, ActualSitParams.Resolution);
+                InsertPhaseToDataLine(PhaseData, &ActualPhase, Now + 1);
                 InsertInnerStatesToDataLine(PhaseData, &ActualPhase, Now + 1);
 
             } else {
@@ -2339,7 +2230,7 @@ int main(int argc, char *argv[]) {
 
                 Now = (int) ((20.0 / ActualSitParams.DeltaT) - 1.0);
 
-                InsertPhaseToDataLine(PhaseData, &ActualPhase, Now + 1, ActualSitParams.Resolution);
+                InsertPhaseToDataLine(PhaseData, &ActualPhase, Now + 1);
                 InsertInnerStatesToDataLine(PhaseData, &ActualPhase, Now + 1);
 
             }
@@ -2669,12 +2560,12 @@ int main(int argc, char *argv[]) {
     stack_free(&Hull);
     free(ActualColorConfig.AgentsColor);
     free(AgentsInDanger);
-    freePhase(&ActualPhase, ActualSitParams.Resolution);
-    freePhase(&GPSPhase, ActualSitParams.Resolution);
-    freePhase(&GPSDelayedPhase, ActualSitParams.Resolution);
+    freePhase(&ActualPhase);
+    freePhase(&GPSPhase);
+    freePhase(&GPSDelayedPhase);
 
     for (i = 0; i < 1 + TimeStepsToStore; i++) {
-        freePhase(&(PhaseData[i]), ActualSitParams.Resolution);
+        freePhase(&(PhaseData[i]));
     }
     free(PhaseData);
 

@@ -277,9 +277,6 @@ typedef struct {
     /* Number of clusters */
     int NumberOfClusters;
 
-    /* Resolution for the CBP */
-    int Resolution;
-
 } sit_parameters_t;
 
 /* Functions for setting parameters */

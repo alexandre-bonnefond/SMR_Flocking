@@ -504,9 +504,6 @@ sit_parameters_t GetSituationParamsFromFile(FILE * InputFile) {
             } else if (strcmp(ReadedName, "StartOfSteadyState") == 0) {
                 temp_sit_parameters.StartOfSteadyState = atof(ReadedValue);
                 NumberOfReadedNames++;
-            } else if (strcmp(ReadedName, "Resolution") == 0) {
-                temp_sit_parameters.Resolution = atof(ReadedValue);
-                NumberOfReadedNames++;
             }
 
         }
@@ -514,9 +511,9 @@ sit_parameters_t GetSituationParamsFromFile(FILE * InputFile) {
     }
 
     /*Checking existence of parameters */
-    if (NumberOfReadedNames < 11) {
+    if (NumberOfReadedNames < 10) {
 
-        printf("Presence of 11 paramers are necessary in \n '%s'.\n\nRequired format (example):\n\n", recover_fileName(InputFile));
+        printf("Presence of 10 paramers are necessary in \n '%s'.\n\nRequired format (example):\n\n", recover_fileName(InputFile));
         printf("NumberOfAgents=10\n");
         printf("Length=1000\n");
         printf("InitialX=1000\n");
@@ -527,7 +524,6 @@ sit_parameters_t GetSituationParamsFromFile(FILE * InputFile) {
         printf("LengthToStore=1.0\n");
         printf("VizSpeedUp=10\n");
         printf("StartOfSteadyState=10\n");
-        printf("Resolution=10\n");
 
         exit(-1);
 

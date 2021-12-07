@@ -121,4 +121,29 @@ There exist many more functions, feel free to try any button on your keyboard or
 
 # Controlling the Swarm
 
+Most of the information for this part have already been shown in the [course](doc/cours.pdf). Also in this part, you will find your first coding assignments. All the instructions are located in the src/utilities/interactions_project.c file.
+
+## Repulsion and Attraction 
+Both the attraction and the repulsion are based on the spring model or harmonic oscillator.
+Indeed, the swarm can be considered as an electric networl model that can be described as a graph with an agent at each vertex and a spring on the edges.
+If you consider a unique equilibrium distance between the agents, both interactions can be concatenated in one formula (see the course). However, it can be interesting to divide the interactions in two parts in order to adapt the gains and the equilibrium distances to create a slack distance between repulsion and attraction. 
+
+### Coding the repulsion 
+You should be familiar with the simulator by now. For this first coding part, you will have to implement the repulsion force.
+Go to the interactions_project.c file and start with EXERCICE 1. You will be guided through the code. You just have to code where "YOUR CODE HERE" is mentionned. 
+
+### Coding the attraction
+Go to the interactions_project.c file and complete EXERCICE 2. It is the same as the repulsion. However the parameters are not the same as we will see later.
+
+## Alignment 
+The alignment force is based on a friction-like model. The goal is for a given agent to reach the velocity and heading of its neighbour. It is actually very similar to the repulsion and attraction formulation. Please refer to the course to see the formula.
+
+### Coding the alignment
+Go to the interactions_project.c file and complete EXERCICE 3.
+
+## Tuning the parameters during a simulation
+
+WIP
 # Performance Analysis
+
+WIP

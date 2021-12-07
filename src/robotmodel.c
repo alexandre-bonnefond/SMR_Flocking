@@ -475,15 +475,6 @@ void Step(phase_t * OutputPhase, phase_t * GPSPhase, phase_t * GPSDelayedPhase,
         }
 
         OutputPhase->Pressure[j] = TempPhase.Pressure[0];
-        
-        /* CBP strategy (only on GPS tick) and Compute the pressure for each agent */
-        // if ((TimeStepLooped) % ((int) (UnitParams->t_GPS.Value / SitParams->DeltaT)) == 0) {
-        //     WhereInGrid(OutputPhase, SitParams->Resolution, j, ArenaCenterX, ArenaCenterY, ArenaRadius);
-        //     // printf("Agent %d\n", j);
-        //     double P0 = PressureMeasure(&TempPhase, 0, 2, 3, 4000);
-        //     // printf("Pression agent %d = %f\n", j, P0);
-        //     OutputPhase->Pressure[j] = P0;
-        // }
 
         /* Solving Newtonian with Euler-Naruyama method */
         NullVect(RealCoptForceVector, 3);
@@ -501,30 +492,6 @@ void Step(phase_t * OutputPhase, phase_t * GPSPhase, phase_t * GPSDelayedPhase,
             SteppedPhase.InnerStates[j][k] = ChangedInnerStateOfActualAgent[k];
         }
     }
-
-    // for (i = 0; i < SitParams->Resolution; i++){
-    //     for (j = 0; j < SitParams->Resolution; j++){
-    //         printf("%f\t", OutputPhase->CBP[i][j]);
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\n\n\n\n");
-
-    /* Print the Laplacian */
-    // for (i = 0; i < SitParams->NumberOfAgents; i++){
-    //     for (j = 0; j < SitParams->NumberOfAgents; j++){
-    //         if (i == j)
-    //         {
-    //             printf("%d\t",(int) OutputPhase->Laplacian[i][i]);
-    //         }
-    //         else
-    //         {
-    //             printf("%f\t", OutputPhase->Laplacian[i][j]);
-    //         }
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\n\n\n\n");
 
     double OnePerDeltaT = 1. / SitParams->DeltaT;
     /* The acceleration saturates at a_max. We save out the acceleration magnitude values before 
@@ -639,9 +606,9 @@ void InitializePreferredVelocities(phase_t * Phase,
 
     /* Some helper dynamic arrays should be allocated here */
     AllocatePhase(&SteppedPhase, SitParams->NumberOfAgents,
-            Phase->NumberOfInnerStates, SitParams->Resolution);
+            Phase->NumberOfInnerStates);
     AllocatePhase(&TempPhase, SitParams->NumberOfAgents,
-            Phase->NumberOfInnerStates, SitParams->Resolution);
+            Phase->NumberOfInnerStates);
     ChangedInnerStateOfActualAgent =
             (double *) calloc(Phase->NumberOfInnerStates, sizeof(double));
 
@@ -660,8 +627,8 @@ void freePreferredVelocities(phase_t * Phase,
     free(Noises);
 
     /* Freeing memory owned by helper arrays */
-    freePhase(&SteppedPhase, SitParams->Resolution);
-    freePhase(&TempPhase, SitParams->Resolution);
+    freePhase(&SteppedPhase);
+    freePhase(&TempPhase);
 
     if (Phase->NumberOfInnerStates != 0) {
         free(ChangedInnerStateOfActualAgent);

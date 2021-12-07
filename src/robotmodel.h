@@ -14,6 +14,7 @@
 #include "utilities/datastructs.h"
 #include "utilities/dynamics_utils.h"
 #include "algo_spp_evol.h"
+#include "algo_spring.h"
 #include "vizmode.h"
 #include "sensors.h"
 #include "algo.h"

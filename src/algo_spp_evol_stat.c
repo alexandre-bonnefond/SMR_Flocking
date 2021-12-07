@@ -547,7 +547,6 @@ void CloseModelSpecificStats(stat_utils_t * StatUtils, unit_model_params_t * Uni
                 ElapsedTime, Data_Corr_Sum / ElapsedTime,
                 Data_CorrStd_Sum / ElapsedTime, Data_CorrMin_Sum / ElapsedTime,
                 Data_CorrMax_Sum / ElapsedTime);
-        printf("\t\t\t\t\t\t%f\n", Data_MaxCluster_Sum);
         fprintf(f_ClusterParams, "%lf\t%lf\t%lf\t%lf\n", ElapsedTime,
                 Data_MinCluster_Sum / ElapsedTime,
                 Data_MaxCluster_Sum / ElapsedTime,

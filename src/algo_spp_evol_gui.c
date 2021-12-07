@@ -8,6 +8,7 @@
 
 #include "algo_gui.h"
 #include "algo_spp_evol.h"
+#include "algo_spring.h"
 #include <stdio.h>
 #include <stdlib.h>
 
