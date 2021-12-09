@@ -3,7 +3,6 @@
 
 # ignore all files in the following directories
 output_default*/
-config/
 .vscode/*
 
 robotflocksim_main

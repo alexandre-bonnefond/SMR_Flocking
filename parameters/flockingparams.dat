@@ -41,7 +41,7 @@ A_Action_Function=10.000000
 # B Action Function (m)
 B_Action_Function=37.000000
 # Size of neighbourhood (-)
-Size_Neighbourhood=5.000000
+Size_Neighbourhood=10.000000
 # Arena Radius (Multiply it with 0.010000 to get its Value in m)
 ArenaRadius=25000.000000
 # Friction coefficient (-)

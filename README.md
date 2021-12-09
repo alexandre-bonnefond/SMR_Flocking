@@ -6,7 +6,7 @@ In this project, your goal will be to implement a simple control law to perform 
 * [Getting Starded](#getting-started)
 * [Controlling the Swarm](#controlling-the-swarm)
 * [Performance Analysis](#performance-analysis)
-
+* [Conclusion](#conclusion)
 # Getting Started
 
 ## Installation
@@ -125,7 +125,7 @@ Most of the information for this part have already been shown in the [course](do
 
 ## Repulsion and Attraction 
 Both the attraction and the repulsion are based on the spring model or harmonic oscillator.
-Indeed, the swarm can be considered as an electric networl model that can be described as a graph with an agent at each vertex and a spring on the edges.
+Indeed, the swarm can be considered as an electric network model that can be described as a graph with an agent at each vertex and a spring on the edges.
 If you consider a unique equilibrium distance between the agents, both interactions can be concatenated in one formula (see the course). However, it can be interesting to divide the interactions in two parts in order to adapt the gains and the equilibrium distances to create a slack distance between repulsion and attraction. 
 
 ### Coding the repulsion 
@@ -142,8 +142,50 @@ The alignment force is based on a friction-like model. The goal is for a given a
 Go to the interactions_project.c file and complete EXERCICE 3.
 
 ## Tuning the parameters during a simulation
+During the simulation, you can directly act on the parameters of the control law you designed. You will also have access to other parameters regarding the interactions with the obstacles for example. The parameters window is devided in two parts, use the key "z" to switch between them. The first window concerns the unit parameters and the second one concerns the control law. 
 
-WIP
+### Assignment 
+
+Goal: Reach a stable flocking motion.
+
+Tune the following parameters to improve the flocking behavior: 
+* Slope of Repulsion
+* Slope of Attraction 
+* Slope of Alignment 
+
+* Size of Neighbourhood
+* Equilibrium Distance
+* Order of alignment error 
+
+The first 3 parameters are the most important one and should be sufficient to reach the goal. But you can also play with the next 3 to see if you can get an improvement.
+
+Once you are satisfied with your setting, you can press F5 to save your parameters into the flockingparams.dat file. This function overwrites the last version so be careful. You can use the -f flag to use different flocking files. 
+
+If you wish to get back to your saved setting during the simulation (for example if you changed a parameter you weren't supposed to and don't remember the correct value) you can press the key 'p'. 
+
 # Performance Analysis
 
-WIP
+As we mentionned in the [Output files](#output-files) section, many files are available for performance analysis. 
+
+Once you completed the previous assignment and found a good parameters set don't forget to save it with the 'F5' command. Then you can run the simulation without the visual to get all the statistics : 
+```
+$ ./robotflocksim_main (-f parameters/flockingparams_new.dat (if you used a different file)) -novis
+```
+All the results will be saved in the output_default/ folder.
+
+## Assignment
+
+Goal : Write a short report that shows the performances of your model.
+
+You may want to compare your model with the initial one. 
+The output configuration file will be already set for you in order to have a baseline between all projects. That is to say that you will only have access to time average metrics. However if you have time you can change the metrics display (from 'stat' to 'timeline') and get the full timeline of the metrics. 
+
+## Going Further
+
+If you have reached this part it could be interesting to try your model in an environment including obstacles. You will see that the performances might be much lower. Try to find another set of parameters that performs better and include it in your report. 
+You will find a constrained environment in the obstacles/ folder. To use it, run the following command : 
+```
+$ ./robotflocksim_main -obst obstacles/obst_test.default (-novis)
+```
+# Conclusion
+I hope this project gave you more insights about the control theory in general and about the flocking more precisely. Feel free to ask any question. You can also contribute to this project if you wish to, all ideas are more than welcome. And don't forget to add a star to this repository if you liked it! 
