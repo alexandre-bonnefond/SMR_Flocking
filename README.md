@@ -125,7 +125,7 @@ Most of the information for this part have already been shown in the [course](do
 
 ## Repulsion and Attraction 
 Both the attraction and the repulsion are based on the spring model or harmonic oscillator.
-Indeed, the swarm can be considered as an electric network model that can be described as a graph with an agent at each vertex and a spring on the edges.
+Indeed, the swarm can be considered as an elastic network model that can be described as a graph with an agent at each vertex and a spring on the edges.
 If you consider a unique equilibrium distance between the agents, both interactions can be concatenated in one formula (see the course). However, it can be interesting to divide the interactions in two parts in order to adapt the gains and the equilibrium distances to create a slack distance between repulsion and attraction. 
 
 ### Coding the repulsion 
