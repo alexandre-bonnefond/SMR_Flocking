@@ -122,6 +122,10 @@ There exist many more functions, feel free to try any button on your keyboard or
 # Controlling the Swarm
 
 Most of the information for this part have already been shown in the [course](doc/cours.pdf). Also in this part, you will find your first coding assignments. All the instructions are located in the src/utilities/interactions_project.c file.
+Whenever you want to compile your code please use the following command :
+```
+$ make project
+```
 
 ## Repulsion and Attraction 
 Both the attraction and the repulsion are based on the spring model or harmonic oscillator.
