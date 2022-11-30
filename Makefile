@@ -47,4 +47,6 @@ spp_evol:
 	$(GCC) src/algo_spp_evol.c src/algo_spp_evol_gui.c src/algo_spp_evol_stat.c src/utilities/interactions.c src/utilities/obstacles.c
 project:
 	$(GCC) src/algo_spring.c src/algo_spp_evol_gui.c src/algo_spp_evol_stat.c src/utilities/interactions_project.c src/utilities/obstacles.c
+optim:
+	$(GCC) src/algo_spring.c src/algo_spp_evol_stat.c src/utilities/interactions_project.c src/utilities/obstacles.c
 
