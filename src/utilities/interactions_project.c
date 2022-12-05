@@ -84,6 +84,10 @@ void RepulsionSpring(double *OutputVelocity,
             continue;
         n += 1;
 
+        UnitVect(DifferenceVector, DifferenceVector);
+        MultiplicateWithScalar(DifferenceVector, DifferenceVector, p_l*DistanceFromNeighbour, Dim_l);
+        VectSum(OutputVelocity, OutputVelocity, DifferenceVector);
+
         /*
 
         ************* YOUR CODE HERE ***************
@@ -146,6 +150,10 @@ void AttractionSpring(double *OutputVelocity,
             continue;
         n += 1;
 
+        UnitVect(DifferenceVector, DifferenceVector);
+        MultiplicateWithScalar(DifferenceVector, DifferenceVector, -p_l*DistanceFromNeighbour, Dim_l);
+        VectSum(OutputVelocity, OutputVelocity, DifferenceVector);
+
         /* *********************** YOUR CODE HERE ************************* */
     }
 
@@ -196,6 +204,7 @@ void Alignment(double *OutputVelocity,
 
         double *AgentsVelocity;
         double *NeighboursVelocity;
+        double VelDiff;
 
         AgentsVelocity = Phase->Velocities[WhichAgent];
 
@@ -209,6 +218,10 @@ void Alignment(double *OutputVelocity,
             if (2 == Dim_l) {
                 DifferenceVelocities[2] = 0.0;
             }
+
+            VectPow(DifferenceVelocities, DifferenceVelocities, alpha, Dim_l);
+            MultiplicateWithScalar(DifferenceVelocities, DifferenceVelocities, h, Dim_l);
+            VectSum(OutputVelocity, OutputVelocity, DifferenceVelocities);
 
             /*
 
